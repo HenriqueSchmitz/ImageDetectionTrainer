@@ -68,21 +68,28 @@ class VideoBackgroundExtractor:
     differenceMean = torch.div(torch.mean(differenceTensor.double()), 255)
     return differenceMean.item()
 
-  def removeBackground(self, image, thresholdFactor = 1):
+  def removeBackground(self, image, thresholdFactor = 1, differenceIndexLimit = 0.2):
     if self.__isGpuAvailable:
       imageTensor = torch.from_numpy(image).cuda().to(torch.int16)
     else:
       imageTensor = torch.from_numpy(image).to(torch.int16)
-    thresholdedDifference = self.__getThresholdedDifferenceTensor(imageTensor, thresholdFactor)
+    thresholdedDifference = self.__getThresholdedDifferenceTensor(imageTensor, thresholdFactor, differenceIndexLimit)
     thresholdedImage = self.__applyThresholdsToImageTensor(imageTensor, thresholdedDifference).to(torch.uint8)
     if self.__isGpuAvailable:
       thresholdedImage = thresholdedImage.cpu()
     return thresholdedImage.numpy()
 
-  def __getThresholdedDifferenceTensor(self, imageTensor, thresholdFactor):
+  def __getThresholdedDifferenceTensor(self, imageTensor, thresholdFactor, differenceIndexLimit):
     differenceTensor = self.__getDifferenceTensor(imageTensor)
-    differenceMean = torch.mul(torch.mean(differenceTensor.double()), thresholdFactor)
-    thresholdedDifference = torch.where(differenceTensor > differenceMean, 1, 0)
+    differenceMean = torch.mean(differenceTensor.double())
+    differenceIndex = torch.div(differenceMean, 255)
+    if differenceIndex <= differenceIndexLimit:
+      differenceThreshold = torch.mul(differenceMean, thresholdFactor)
+      thresholdedDifference = torch.where(differenceTensor > differenceMean, 1, 0)
+    else:
+      thresholdedDifference = torch.ones(differenceTensor.size())
+      if self.__isGpuAvailable:
+        thresholdedDifference = thresholdedDifference.cuda()
     return thresholdedDifference
 
   def __applyThresholdsToImageTensor(self, imageTensor, thresholdsTensor):
