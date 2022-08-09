@@ -67,3 +67,26 @@ class VideoBackgroundExtractor:
     differenceTensor = self.__getDifferenceTensor(imageTensor.to(torch.int16))
     differenceMean = torch.div(torch.mean(differenceTensor.double()), 255)
     return differenceMean.item()
+
+  def removeBackground(self, image, thresholdFactor = 1):
+    if self.__isGpuAvailable:
+      imageTensor = torch.from_numpy(image).cuda().to(torch.int16)
+    else:
+      imageTensor = torch.from_numpy(image).to(torch.int16)
+    thresholdedDifference = self.__getThresholdedDifferenceTensor(imageTensor, thresholdFactor)
+    thresholdedImage = self.__applyThresholdsToImageTensor(imageTensor, thresholdedDifference)
+    if self.__isGpuAvailable:
+      thresholdedImage = thresholdedImage.cpu()
+    return thresholdedImage.numpy()
+
+  def __getThresholdedDifferenceTensor(self, imageTensor, thresholdFactor):
+    differenceTensor = self.__getDifferenceTensor(imageTensor)
+    differenceMean = torch.mul(torch.mean(differenceTensor.double()), thresholdFactor)
+    thresholdedDifference = torch.where(differenceTensor > differenceMean, 1, 0)
+    return thresholdedDifference
+
+  def __applyThresholdsToImageTensor(self, imageTensor, thresholdsTensor):
+    reshapedImage = torch.permute(imageTensor, (2, 0, 1))
+    reshapedThresholdedImage = torch.mul(reshapedImage, thresholdsTensor)
+    thresholdedImage = torch.permute(reshapedThresholdedImage, (1, 2, 0))
+    return thresholdedImage
