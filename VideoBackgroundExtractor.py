@@ -74,7 +74,7 @@ class VideoBackgroundExtractor:
     else:
       imageTensor = torch.from_numpy(image).to(torch.int16)
     thresholdedDifference = self.__getThresholdedDifferenceTensor(imageTensor, thresholdFactor)
-    thresholdedImage = self.__applyThresholdsToImageTensor(imageTensor, thresholdedDifference)
+    thresholdedImage = self.__applyThresholdsToImageTensor(imageTensor, thresholdedDifference).to(torch.uint8)
     if self.__isGpuAvailable:
       thresholdedImage = thresholdedImage.cpu()
     return thresholdedImage.numpy()
