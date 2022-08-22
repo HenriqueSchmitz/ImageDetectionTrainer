@@ -25,6 +25,11 @@ class VideoBackgroundExtractor:
         frames.append(frame)
     video.set(cv2.CAP_PROP_POS_FRAMES, previousPosition)
     return frames
+  
+  def loadBackground(self, backgroundImage):
+    self.__backgroundTensor = torch.from_numpy(backgroundImage)
+    if self.__isGpuAvailable:
+      self.__backgroundTensor = self.__backgroundTensor.cuda()
 
   def getBackgroundFrame(self):
     self.__validadeBackground()
