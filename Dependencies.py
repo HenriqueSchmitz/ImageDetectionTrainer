@@ -26,10 +26,10 @@ def prepareDependencies():
 
     # Setup Tensorflow
     runShellCommand("git clone --q https://github.com/tensorflow/models.git")
-    runShellCommand("cd models/research")
-    runShellCommand("protoc object_detection/protos/*.proto --python_out=.")
-    runShellCommand("cp object_detection/packages/tf2/setup.py .")
-    runShellCommand("python -m pip --q install .")
+    # runShellCommand("cd models/research")
+    runShellCommand("cd models/research && protoc object_detection/protos/*.proto --python_out=.")
+    runShellCommand("cd models/research && cp object_detection/packages/tf2/setup.py .")
+    runShellCommand("cd models/research && python -m pip --q install .")
 
     # Correct opencv version
     import os
