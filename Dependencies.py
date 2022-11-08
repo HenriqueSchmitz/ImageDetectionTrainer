@@ -11,11 +11,13 @@ def displayGpuInformation():
         print(gpu_info)
 
 def mountDrive():
+    print("Mounting Google Drive...")
     from google.colab import drive
     drive.mount('/content/gdrive')
     runShellCommand("ln -s /content/gdrive/My\ Drive/ /mydrive")
 
 def setupTensorflow():
+    print("Installing Tensorflow...")
     runShellCommand("git clone --q https://github.com/tensorflow/models.git")
     runShellCommand("protoc models/research/object_detection/protos/*.proto --python_out=.")
     runShellCommand("cp models/research/object_detection/packages/tf2/setup.py .")
@@ -28,6 +30,7 @@ def correctOpencvVersion(desiredOpencvVersion):
         if desiredOpencvVersion not in opencvSubLibraryVersion:
             libraryName = opencvSubLibraryVersion.split(" ")[0]
             if libraryName != "": 
+                print("Correcting library version for " + libraryName)
                 runShellCommand("pip uninstall " + str(libraryName) + " --y")
                 runShellCommand("pip install " + str(libraryName) + "==" + str(desiredOpencvVersion))
 
