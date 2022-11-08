@@ -2,16 +2,7 @@ def runShellCommand(command):
     import subprocess
     return subprocess.check_output(command, shell=True).decode("utf-8").split("\n")
 
-def prepareDependencies():
-    import os
-    import glob
-    import xml.etree.ElementTree as ET
-    import pandas as pd
-    import tensorflow as tf
-    import subprocess
-    print(tf.__version__)
-
-    # Check GPU version
+def displayGpuInformation():
     gpu_info = runShellCommand("nvidia-smi")
     gpu_info = '\n'.join(gpu_info)
     if gpu_info.find('failed') >= 0:
@@ -19,26 +10,37 @@ def prepareDependencies():
     else:
         print(gpu_info)
 
-    # Mount Drive
+def mountDrive():
     from google.colab import drive
     drive.mount('/content/gdrive')
     runShellCommand("ln -s /content/gdrive/My\ Drive/ /mydrive")
 
-    # Setup Tensorflow
+def setupTensorflow():
     runShellCommand("git clone --q https://github.com/tensorflow/models.git")
-    # runShellCommand("cd models/research")
-    runShellCommand("cd models/research && protoc object_detection/protos/*.proto --python_out=.")
-    runShellCommand("cd models/research && cp object_detection/packages/tf2/setup.py .")
-    runShellCommand("cd models/research && python -m pip --q install .")
+    runShellCommand("protoc models/research/object_detection/protos/*.proto --python_out=.")
+    runShellCommand("cp models/research/object_detection/packages/tf2/setup.py .")
+    runShellCommand("python -m pip --q install .")
 
-    # Correct opencv version
-    import os
-    desiredOpencvVersion = "4.1.2.30"
+def correctOpencvVersion(desiredOpencvVersion):
+    print("Correcting OpenCV versions to use version " + desiredOpencvVersion)
     opencvVersions = runShellCommand("pip list|grep opencv")
-    print(opencvVersions)
     for opencvSubLibraryVersion in opencvVersions:
         if desiredOpencvVersion not in opencvSubLibraryVersion:
             libraryName = opencvSubLibraryVersion.split(" ")[0]
             if libraryName != "": 
                 runShellCommand("pip uninstall " + str(libraryName) + " --y")
                 runShellCommand("pip install " + str(libraryName) + "==" + str(desiredOpencvVersion))
+
+def prepareDependencies():
+    import os
+    import glob
+    import xml.etree.ElementTree as ET
+    import pandas as pd
+    import tensorflow as tf
+    import subprocess
+    print("Tensorflow version: " + tf.__version__)
+
+    displayGpuInformation()
+    mountDrive()
+    setupTensorflow()
+    correctOpencvVersion("4.1.2.30")
