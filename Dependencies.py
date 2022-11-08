@@ -35,8 +35,10 @@ def prepareDependencies():
     import os
     desiredOpencvVersion = "4.1.2.30"
     opencvVersions = runShellCommand("pip list|grep opencv")
+    print(opencvVersions)
     for opencvSubLibraryVersion in opencvVersions:
         if desiredOpencvVersion not in opencvSubLibraryVersion:
             libraryName = opencvSubLibraryVersion.split(" ")[0]
+            print(libraryName)
             runShellCommand("pip uninstall " + str(libraryName) + " --y")
             runShellCommand("pip install " + str(libraryName) + "==" + str(desiredOpencvVersion))
