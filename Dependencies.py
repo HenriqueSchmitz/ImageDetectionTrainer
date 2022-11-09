@@ -16,13 +16,13 @@ def mountDrive():
     drive.mount('/content/gdrive')
     runShellCommand("ln -s /content/gdrive/My\ Drive/ /mydrive")
 
-def setupTensorflow():
-    print("Cloning Tensorflow from https://github.com/tensorflow/models.git...")
+def setupTensorflowModels():
+    print("Cloning Tensorflow models from https://github.com/tensorflow/models.git...")
     runShellCommand("git clone --q https://github.com/tensorflow/models.git")
-    print("Building Tensorflow...")
+    print("Building Tensorflow models...")
     runShellCommand("cd models/research && protoc object_detection/protos/*.proto --python_out=.")
     runShellCommand("cd models/research && cp object_detection/packages/tf2/setup.py .")
-    print("Installing Tensorflow...")
+    print("Installing Tensorflow models...")
     runShellCommand("cd models/research && python -m pip --q install .")
 
 def correctOpencvVersion(desiredOpencvVersion):
@@ -47,5 +47,5 @@ def prepareDependencies():
 
     displayGpuInformation()
     mountDrive()
-    setupTensorflow()
+    setupTensorflowModels()
     correctOpencvVersion("4.1.2.30")
