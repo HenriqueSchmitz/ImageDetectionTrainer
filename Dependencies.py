@@ -17,11 +17,13 @@ def mountDrive():
     runShellCommand("ln -s /content/gdrive/My\ Drive/ /mydrive")
 
 def setupTensorflow():
-    print("Installing Tensorflow...")
+    print("Cloning Tensorflow from https://github.com/tensorflow/models.git...")
     runShellCommand("git clone --q https://github.com/tensorflow/models.git")
+    print("Building Tensorflow...")
     runShellCommand("cd models/research && protoc object_detection/protos/*.proto --python_out=.")
-    runShellCommand("cp models/research/object_detection/packages/tf2/setup.py .")
-    runShellCommand("python -m pip --q install .")
+    runShellCommand("cd models/research && cp object_detection/packages/tf2/setup.py .")
+    print("Installing Tensorflow...")
+    runShellCommand("cd models/research && python -m pip --q install .")
 
 def correctOpencvVersion(desiredOpencvVersion):
     print("Correcting OpenCV versions to use version " + desiredOpencvVersion)
