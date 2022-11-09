@@ -1,4 +1,5 @@
 from .Shell import runShellCommand
+from .Constants import mydrive
 
 def prepareTraining(baseModel, modelSource, projectFolder):
     downloadBaseModel(baseModel, modelSource, projectFolder)
@@ -19,4 +20,4 @@ def configurePipeline(baseModel, projectFolder):
     runShellCommand("cp " + modelConfigExamplePath + " " + dataFolderPath)
 
 def buildDataFolderPath(projectFolder):
-    return "/mydrive/" + projectFolder + "/data/"
+    return mydrive + projectFolder + "/data/"
