@@ -10,7 +10,7 @@ def downloadBaseModel(baseModel, modelSource, projectFolder):
     compressedBaseModel = baseModel + ".tar.gz"
     modelDownloadUrl = modelSource + compressedBaseModel
     dataFolderPath = buildDataFolderPath(projectFolder)
-    runShellCommand("cd " + dataFolderPath + " wget " + modelDownloadUrl)
+    runShellCommand("cd " + dataFolderPath + " && wget " + modelDownloadUrl)
     runShellCommand("cd " + dataFolderPath + "tar -xzvf  " + compressedBaseModel)
 
 def configurePipeline(baseModel, projectFolder):
