@@ -1,6 +1,4 @@
-def runShellCommand(command):
-    import subprocess
-    return subprocess.check_output(command, shell=True).decode("utf-8").split("\n")
+from Shell import runShellCommand
 
 def displayGpuInformation():
     gpu_info = runShellCommand("nvidia-smi")
