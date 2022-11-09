@@ -1,4 +1,4 @@
-from Shell import runShellCommand
+from .Shell import runShellCommand
 
 def prepareTraining(baseModel, modelSource, projectFolder):
     downloadBaseModel(baseModel, modelSource, projectFolder)

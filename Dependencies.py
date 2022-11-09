@@ -1,4 +1,4 @@
-from Shell import runShellCommand
+from .Shell import runShellCommand
 
 def displayGpuInformation():
     gpu_info = runShellCommand("nvidia-smi")
