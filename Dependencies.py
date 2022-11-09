@@ -19,7 +19,7 @@ def mountDrive():
 def setupTensorflow():
     print("Installing Tensorflow...")
     runShellCommand("git clone --q https://github.com/tensorflow/models.git")
-    runShellCommand("protoc models/research/object_detection/protos/*.proto --python_out=.")
+    runShellCommand("cd models/research && protoc object_detection/protos/*.proto --python_out=.")
     runShellCommand("cp models/research/object_detection/packages/tf2/setup.py .")
     runShellCommand("python -m pip --q install .")
 
